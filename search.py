@@ -9,4 +9,4 @@ def search(text):
     html = response.read()
     soup = BeautifulSoup(html)
     
-    return 'https://www.youtube.com' + soup.find(attrs={'class':'yt-uix-tile-link'})['href']
+    return soup.find(attrs={'class':'yt-uix-tile-link'})['href'][9:]
