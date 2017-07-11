@@ -1,6 +1,7 @@
 import youtube_dl
 
-def download(link):
+
+def download(video_id):
     ydl_opts = {}
     with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-        ydl.download([link])
+        ydl.download(['https://youtube.com/watch?v=' + video_id])
