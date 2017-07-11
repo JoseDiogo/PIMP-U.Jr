@@ -13,6 +13,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         super(MainWindow, self).__init__()
         self.setupUi(self)
 
+        self.playlist_file = 'playlist.txt'
+        self.playlist = list()
+        with open(self.playlist_file, 'r') as file:
+            for line in file.readlines():
+                self.playlist.append(line.strip())
+
         self.current_video_id = str()
 
         self.music_player = player.Player()
