@@ -1,9 +1,3 @@
-from sense_hat import SenseHat
-
-sense = SenseHat()
-
-
-
 r = [150, 0, 0]
 o = [255, 127, 0]
 y = [255, 255, 0]
@@ -91,26 +85,3 @@ mute = [e,e,e,e,e,e,e,e,
         e,e,r,e,e,r,e,e,
         e,r,e,e,e,e,r,e,
         e,e,e,e,e,e,e,e]
-
-
-
-          
-
-sense.set_pixels(mute)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
