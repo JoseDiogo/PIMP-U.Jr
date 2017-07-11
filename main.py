@@ -28,6 +28,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 for line in file.readlines():
                     self.playlist.append(line.strip())
 
+        self.cache_size = 50000000
+
+        while self.calculate_size() > self.cache_size:
+            os.remove(self.oldest_file())
+
         if len(self.playlist) > 0:
             self.current_video_id = self.playlist[0]
         else:
@@ -185,6 +190,26 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.media_open(self.current_video_id + self.ext)
         self.media_play()
 
+    def calculate_size(self):
+        total_size = 0
+        for filename in os.listdir(os.getcwd()):
+            if filename.endswith('.flac'):
+                total_size += os.path.getsize(filename)
+        return total_size
+
+    def oldest_file(self):
+        oldest_file = str()
+        oldest_time = 0.0
+        for filename in os.listdir(os.getcwd()):
+            if filename.endswith('.flac'):
+                if oldest_time == 0.0:
+                    oldest_time = os.path.getmtime(filename)
+                    oldest_file = filename
+                else:
+                    if os.path.getmtime(filename) < oldest_time:
+                        oldest_time = os.path.getmtime(filename)
+                        oldest_file = filename
+        return oldest_file                
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
