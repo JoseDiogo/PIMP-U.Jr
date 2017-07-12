@@ -22,3 +22,9 @@ class Player():
 
     def set_volume(self, volume):
         self.player.audio_set_volume(volume)
+
+    def ended(self):
+        if self.player.get_state() == vlc.State.Ended:
+            return True
+        else:
+            return False
