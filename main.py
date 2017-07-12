@@ -243,7 +243,7 @@ class VoiceRecognition(QtCore.QObject):
 
     def transcribe(self):
         transcription = speech.transcribe()
-        signal_finished_transcribing.emit(transcription)
+        self.signal_finished_transcribing.emit(transcription)
 
 
 class Downloader(QtCore.QObject):
