@@ -16,7 +16,7 @@ except ModuleNotFoundError:
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     signal_start_transcribing = QtCore.pyqtSignal()
-    signal_start_downloading = QtCore.pyqtSignal()
+    signal_start_downloading = QtCore.pyqtSignal(str)
 
     def __init__(self):
         super(MainWindow, self).__init__()
@@ -48,6 +48,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         except NameError:
             self.sense_hat = None
 
+        self.downloader_thread = QtCore.QThread()
+        self.downloader = Downloader(self)
+        self.downloader.moveToThread(self.downloader_thread)
+        self.signal_start_downloading.connect(self.downloader.download)
+        self.downloader_thread.start()
+
         self.horizontalSlider.setValue(100)
         self.horizontalSlider.valueChanged.connect(self.update_volume)
 
@@ -62,6 +68,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.pushButton_back.clicked.connect(self.media_backward)
 
         if speech.found_module:
+            self.voice_thread = QtCore.QThread()
+            self.voice_recognition = VoiceRecognition(self)
+            self.voice_recognition.moveToThread(self.voice_thread)
+            self.signal_start_transcribing.connect(self.voice_recognition.transcribe)
+            self.voice_thread.start()
+            
             self.pushButton_voice.clicked.connect(self.start_voice)
         else:
             self.pushButton_voice.setEnabled(False)
@@ -72,19 +84,16 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.sense_hat.stick.direction_left = self.media_backward
             self.sense_hat.stick.direction_right = self.media_forward
 
-    def search_and_download(self, search_terms):
+    def search_download_and_play(self, search_terms):
         self.current_video_id = search.search(search_terms)
         if not os.path.isfile(self.current_video_id + self.ext):
-            download.download(self.current_video_id)
+            self.signal_start_downloading.emit(self.current_video_id)
 
     def start_text(self):
-        self.search_and_download(self.lineEdit.text())
-        self.media_open(self.current_video_id + self.ext)
-        self.media_play()
+        self.search_download_and_play(self.lineEdit.text())
 
     def start_voice(self):
-        transcription = speech.transcribe()
-        self.start_voice_2(transcription)
+        self.signal_start_transcribing.emit()
 
     def start_voice_2(self, transcription):
         if transcription.lower() == 'pause':
@@ -100,9 +109,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 or transcription.lower() == 'back' or transcription.lower() == 'previous':
             self.media_backward()
         else:
-            self.search_and_download(transcription)
-            self.media_open(self.current_video_id + self.ext)
-            self.media_play()
+            self.search_download_and_play(transcription)
 
     def update_volume(self):
         volume = self.horizontalSlider.value() + 1
@@ -196,8 +203,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def download_and_play(self, video_id):
         self.current_video_id = video_id
         if not os.path.isfile(self.current_video_id + self.ext):
-            download.download(self.current_video_id)
+            self.signal_start_downloading.emit(self.current_video_id)
 
+    def play_file(self):
         self.media_open(self.current_video_id + self.ext)
         self.media_play()
 
@@ -223,12 +231,36 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         return oldest_file
 
 
-class VoiceRecognition(QtCore.QThread):
+class VoiceRecognition(QtCore.QObject):
     signal_finished_transcribing = QtCore.pyqtSignal(str)
 
+    def __init__(self, main, parent=None):
+        super(VoiceRecognition, self).__init__(parent)
 
-class Downloader(QtCore.QThread):
-    signal_finished_downloading = QtCore.pyqtSignal(str)
+        self.main = main
+
+        self.signal_finished_transcribing.connect(self.main.start_voice_2)
+
+    def transcribe(self):
+        transcription = speech.transcribe()
+        signal_finished_transcribing.emit(transcription)
+
+
+class Downloader(QtCore.QObject):
+    signal_finished_downloading = QtCore.pyqtSignal()
+
+    def __init__(self, main, parent=None):
+        super(Downloader, self).__init__(parent)
+
+        self.main = main
+
+        self.signal_finished_downloading.connect(self.main.play_file)
+
+    def download(self, video_id):
+        download.download(video_id)
+
+        self.signal_finished_downloading.emit()
+
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
