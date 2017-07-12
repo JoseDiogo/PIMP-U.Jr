@@ -1,5 +1,6 @@
 import speech_recognition as sr
 
+
 def transcribe(language='en-US'):
     # obtain audio from the microphone
     r = sr.Recognizer()
