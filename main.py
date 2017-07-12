@@ -95,6 +95,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def start_voice(self):
         self.signal_start_transcribing.emit()
 
+    @QtCore.pyqtSlot(str)
     def start_voice_2(self, transcription):
         if transcription.lower() == 'pause':
             self.media_pause()
@@ -205,6 +206,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if not os.path.isfile(self.current_video_id + self.ext):
             self.signal_start_downloading.emit(self.current_video_id)
 
+    @QtCore.pyqtSlot()
     def play_file(self):
         self.media_open(self.current_video_id + self.ext)
         self.media_play()
@@ -241,6 +243,7 @@ class VoiceRecognition(QtCore.QObject):
 
         self.signal_finished_transcribing.connect(self.main.start_voice_2)
 
+    @QtCore.pyqtSlot()
     def transcribe(self):
         transcription = speech.transcribe()
         self.signal_finished_transcribing.emit(transcription)
@@ -256,6 +259,7 @@ class Downloader(QtCore.QObject):
 
         self.signal_finished_downloading.connect(self.main.play_file)
 
+    @QtCore.pyqtSlot(str)
     def download(self, video_id):
         download.download(video_id)
 
