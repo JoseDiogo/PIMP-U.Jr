@@ -1,7 +1,6 @@
-import youtube_dl
+import subprocess
 
 
 def download(video_id):
-    ydl_opts = {'outtmpl': '%(id)s.%(ext)s'}
-    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-        ydl.download(['https://youtube.com/watch?v=' + video_id])
+    subprocess.run(['youtube-dl', '-x', '--audio-quality', '0', '--audio-format', 'flac', '-o', '%(id)s.%(ext)s',
+                    'https://youtube.com/watch?v=' + video_id])
