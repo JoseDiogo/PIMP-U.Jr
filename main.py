@@ -88,6 +88,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def media_open(self, file):
         self.music_player.open(file)
+        if not file.split(sep='.')[0] in self.playlist:
+            self.add_to_playlist(file.split(sep='.')[0])
 
     def volume_up(self):
         volume = self.horizontalSlider.value() + 1
@@ -96,6 +98,11 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def volume_down(self):
         volume = self.horizontalSlider.value() + 1
         self.horizontalSlider.setValue(volume - 10)
+
+    def add_to_playlist(self, video_id):
+        self.playlist.append(video_id)
+        with open(self.playlist_file, 'a') as file:
+            file.write(video_id + '\n')
 
 
 if __name__ == '__main__':
