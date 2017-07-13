@@ -9,6 +9,7 @@ from PyQt5 import QtWidgets
 from gui import Ui_MainWindow
 try:
     import sense_hat
+    import icons
 except ModuleNotFoundError:
     print('Couldn\'t import sense_hat')
 
@@ -74,15 +75,27 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.music_player.set_volume(volume)
         self.label_volume.setText(str(volume) + '%')
 
+        if self.sense_hat is not None:
+            if volume < 33:
+                self.sense_hat.set_pixels(icons.volume_min)
+            elif volume < 66:
+                self.sense_hat.set_pixels(icons.volume_med)
+            else:
+                self.sense_hat.set_pixels(icons.volume_med)
+
     def media_mute(self):
         self.music_player.mute()
         self.pushButton_mute.setText('Unmute')
+        if self.sense_hat is not None:
+            self.sense_hat.set_pixels(icons.mute)
         self.pushButton_mute.clicked.disconnect()
         self.pushButton_mute.clicked.connect(self.media_unmute)
 
     def media_unmute(self):
         self.music_player.unmute()
         self.pushButton_mute.setText('Mute')
+        if self.sense_hat is not None:
+            self.sense_hat.set_pixels(icons.play)
         self.pushButton_mute.clicked.disconnect()
         self.pushButton_mute.clicked.connect(self.media_mute)
 
@@ -91,12 +104,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.label_status.setText('Playing')
         if self.sense_hat is not None:
             self.sense_hat.stick.direction_middle = self.media_pause
+            self.sense_hat.set_pixels(icons.play)
 
     def media_pause(self):
         self.music_player.pause()
         self.label_status.setText('Paused')
         if self.sense_hat is not None:
             self.sense_hat.stick.direction_middle = self.media_play
+            self.sense_hat.set_pixels(icons.pause)
 
     def media_stop(self):
         self.music_player.stop()
@@ -121,6 +136,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             file.write(video_id + '\n')
 
     def media_forward(self):
+        if self.sense_hat is not None:
+            self.sense_hat.set_pixels(icons.forward)
+
         index = self.playlist.index(self.current_video_id)
         target_index = index + 1
         if target_index > len(self.playlist) - 1:
@@ -129,6 +147,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.download_and_play(self.playlist[target_index])
 
     def media_backward(self):
+        if self.sense_hat is not None:
+            self.sense_hat.set_pixels(icons.backwards)
+
         index = self.playlist.index(self.current_video_id)
         target_index = index - 1
         if target_index < 0:
