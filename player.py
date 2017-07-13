@@ -1,9 +1,13 @@
 import vlc
 
 
-class Player():
+class Player:
+    def __init__(self):
+        self.player = vlc.MediaPlayer()
+        self.instance = vlc.Instance()
+
     def open(self, file):
-        self.player = vlc.MediaPlayer(file)
+        self.player.set_media(self.instance.media_new_path(file))
 
     def play(self):
         self.player.play()
