@@ -55,8 +55,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         if self.sense_hat is not None:
             self.sense_hat.stick.direction_up = self.volume_up
             self.sense_hat.stick.direction_down = self.volume_down
-            self.sense_hat.stick.direction_left = self.volume_backward
-            self.sense_hat.stick.direction_right = self.volume_forward
+            self.sense_hat.stick.direction_left = self.media_backward
+            self.sense_hat.stick.direction_right = self.media_forward
 
     def search_and_download(self, search_terms):
         self.current_video_id = search.search(search_terms)
