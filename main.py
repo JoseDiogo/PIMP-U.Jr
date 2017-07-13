@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import sys
+import os
 import search
 import download
 import player
@@ -15,9 +16,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
         self.playlist_file = 'playlist.txt'
         self.playlist = list()
-        with open(self.playlist_file, 'r') as file:
-            for line in file.readlines():
-                self.playlist.append(line.strip())
+        if os.path.isfile(self.playlist_file):
+            with open(self.playlist_file, 'r') as file:
+                for line in file.readlines():
+                    self.playlist.append(line.strip())
 
         self.current_video_id = str()
 
