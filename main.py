@@ -28,7 +28,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 for line in file.readlines():
                     self.playlist.append(line.strip())
 
-        self.cache_size = 50000000
+        # 1 GiB
+        self.cache_size = 1073741824
 
         while self.calculate_size() > self.cache_size:
             os.remove(self.oldest_file())
