@@ -18,6 +18,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         super(MainWindow, self).__init__()
         self.setupUi(self)
 
+        self.ext = '.flac'
+
         self.playlist_file = 'playlist.txt'
         self.playlist = list()
         if os.path.isfile(self.playlist_file):
@@ -43,23 +45,28 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.pushButton_stop.clicked.connect(self.media_stop)
         self.pushButton_search.clicked.connect(self.start_text)
         self.pushButton_voice.clicked.connect(self.start_voice)
+        self.pushButton_forwards.clicked.connect(self.media_forward)
+        self.pushButton_back.clicked.connect(self.media_backward)
 
         if self.sense_hat is not None:
             self.sense_hat.stick.direction_up = self.volume_up
             self.sense_hat.stick.direction_down = self.volume_down
+            self.sense_hat.stick.direction_left = self.volume_backward
+            self.sense_hat.stick.direction_right = self.volume_forward
 
     def search_and_download(self, search_terms):
         self.current_video_id = search.search(search_terms)
-        download.download(self.current_video_id)
+        if not os.path.isfile(self.current_video_id + self.ext):
+            download.download(self.current_video_id)
 
     def start_text(self):
         self.search_and_download(self.lineEdit.text())
-        self.media_open(self.current_video_id + '.flac')
+        self.media_open(self.current_video_id + self.ext)
         self.media_play()
 
     def start_voice(self):
         self.search_and_download(speech.transcribe())
-        self.media_open(self.current_video_id + '.flac')
+        self.media_open(self.current_video_id + self.ext)
         self.media_play()
 
     def update_volume(self):
@@ -112,6 +119,30 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.playlist.append(video_id)
         with open(self.playlist_file, 'a') as file:
             file.write(video_id + '\n')
+
+    def media_forward(self):
+        index = self.playlist.index(self.current_video_id)
+        target_index = index + 1
+        if target_index > len(self.playlist) - 1:
+            target_index = len(self.playlist) - 1
+
+        self.download_and_play(self.playlist[target_index])
+
+    def media_backward(self):
+        index = self.playlist.index(self.current_video_id)
+        target_index = index - 1
+        if target_index < 0:
+            target_index = 0
+
+        self.download_and_play(self.playlist[target_index])
+
+    def download_and_play(self, video_id):
+        self.current_video_id = video_id
+        if not os.path.isfile(self.current_video_id + self.ext):
+            download.download(self.current_video_id)
+
+        self.media_open(self.current_video_id + self.ext)
+        self.media_play()
 
 
 if __name__ == '__main__':
