@@ -35,10 +35,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def start_text(self):
         self.search_and_download(self.lineEdit.text())
         self.media_open(self.current_video_id + '.flac')
+        self.media_play()
 
     def start_voice(self):
         self.search_and_download(speech.transcribe())
         self.media_open(self.current_video_id + '.flac')
+        self.media_play()
 
     def update_volume(self):
         volume = self.horizontalSlider.value() + 1
