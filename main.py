@@ -28,7 +28,10 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                 for line in file.readlines():
                     self.playlist.append(line.strip())
 
-        self.current_video_id = str()
+        if len(self.playlist) > 0:
+            self.current_video_id = self.playlist[0]
+        else:
+            self.current_video_id = str()
 
         self.music_player = player.Player()
         try:
@@ -136,26 +139,28 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             file.write(video_id + '\n')
 
     def media_forward(self):
-        if self.sense_hat is not None:
-            self.sense_hat.set_pixels(icons.forward)
+        if len(self.playlist) > 0:
+            if self.sense_hat is not None:
+                self.sense_hat.set_pixels(icons.forward)
 
-        index = self.playlist.index(self.current_video_id)
-        target_index = index + 1
-        if target_index > len(self.playlist) - 1:
-            target_index = len(self.playlist) - 1
+            index = self.playlist.index(self.current_video_id)
+            target_index = index + 1
+            if target_index > len(self.playlist) - 1:
+                target_index = len(self.playlist) - 1
 
-        self.download_and_play(self.playlist[target_index])
+            self.download_and_play(self.playlist[target_index])
 
     def media_backward(self):
-        if self.sense_hat is not None:
-            self.sense_hat.set_pixels(icons.backwards)
+        if len(self.playlist) > 0:
+            if self.sense_hat is not None:
+                self.sense_hat.set_pixels(icons.backwards)
 
-        index = self.playlist.index(self.current_video_id)
-        target_index = index - 1
-        if target_index < 0:
-            target_index = 0
+            index = self.playlist.index(self.current_video_id)
+            target_index = index - 1
+            if target_index < 0:
+                target_index = 0
 
-        self.download_and_play(self.playlist[target_index])
+            self.download_and_play(self.playlist[target_index])
 
     def download_and_play(self, video_id):
         self.current_video_id = video_id
