@@ -139,7 +139,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             file.write(video_id + '\n')
 
     def media_forward(self):
-        if len(self.playlist) > 0:
+        if len(self.playlist) > 0 and self.current_video_id != '':
             if self.sense_hat is not None:
                 self.sense_hat.set_pixels(icons.forward)
 
@@ -151,7 +151,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.download_and_play(self.playlist[target_index])
 
     def media_backward(self):
-        if len(self.playlist) > 0:
+        if len(self.playlist) > 0 and self.current_video_id != '':
             if self.sense_hat is not None:
                 self.sense_hat.set_pixels(icons.backwards)
 
