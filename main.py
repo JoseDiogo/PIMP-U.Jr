@@ -7,6 +7,7 @@ import player
 import speech
 from PyQt5 import QtWidgets
 from gui import Ui_MainWindow
+import sense_hat
 
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
@@ -24,6 +25,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.current_video_id = str()
 
         self.music_player = player.Player()
+        self.sense_hat = sense_hat.SenseHat()
 
         self.horizontalSlider.setValue(100)
         self.horizontalSlider.valueChanged.connect(self.update_volume)
@@ -35,6 +37,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.pushButton_stop.clicked.connect(self.media_stop)
         self.pushButton_search.clicked.connect(self.start_text)
         self.pushButton_voice.clicked.connect(self.start_voice)
+
+        self.sense_hat.stick.direction_up = self.volume_up
+        self.sense_hat.stick.direction_down = self.volume_down
 
     def search_and_download(self, search_terms):
         self.current_video_id = search.search(search_terms)
@@ -70,10 +75,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     def media_play(self):
         self.music_player.play()
         self.label_status.setText('Playing')
+        self.sense_hat.stick.direction_middle = self.media_pause
 
     def media_pause(self):
         self.music_player.pause()
         self.label_status.setText('Paused')
+        self.sense_hat.stick.direction_middle = self.media_play
 
     def media_stop(self):
         self.music_player.stop()
@@ -81,6 +88,14 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def media_open(self, file):
         self.music_player.open(file)
+
+    def volume_up(self):
+        volume = self.horizontalSlider.value() + 1
+        self.horizontalSlider.setValue(volume + 10)
+
+    def volume_down(self):
+        volume = self.horizontalSlider.value() + 1
+        self.horizontalSlider.setValue(volume - 10)
 
 
 if __name__ == '__main__':
