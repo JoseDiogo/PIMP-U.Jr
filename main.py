@@ -84,7 +84,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             elif volume < 66:
                 self.sense_hat.set_pixels(icons.volume_med)
             else:
-                self.sense_hat.set_pixels(icons.volume_med)
+                self.sense_hat.set_pixels(icons.volume_max)
 
     def media_mute(self):
         self.music_player.mute()
