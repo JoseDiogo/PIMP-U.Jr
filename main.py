@@ -88,6 +88,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.current_video_id = search.search(search_terms)
         if not os.path.isfile(self.current_video_id + self.ext):
             self.signal_start_downloading.emit(self.current_video_id)
+        else:
+            self.play_file()
 
     def start_text(self):
         self.search_download_and_play(self.lineEdit.text())
@@ -205,6 +207,8 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.current_video_id = video_id
         if not os.path.isfile(self.current_video_id + self.ext):
             self.signal_start_downloading.emit(self.current_video_id)
+        else:
+            self.play_file()
 
     @QtCore.pyqtSlot()
     def play_file(self):
