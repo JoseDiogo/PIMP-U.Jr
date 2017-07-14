@@ -70,9 +70,23 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.media_play()
 
     def start_voice(self):
-        self.search_and_download(speech.transcribe())
-        self.media_open(self.current_video_id + self.ext)
-        self.media_play()
+        transcription = speech.transcribe()
+        if transcription.lower() == 'pause':
+            self.media_pause()
+        elif transcription.lower() == 'play':
+            self.media_play()
+        elif transcription.lower() == 'stop':
+            self.media_stop()
+        elif transcription.lower() == 'forward' or transcription.lower() == 'forwards' \
+                or transcription.lower() == 'next':
+            self.media_forward()
+        elif transcription.lower() == 'backward' or transcription.lower() == 'backwars' \
+                or transcription.lower() == 'back' or transcription.lower() == 'previous':
+            self.media_backward()
+        else:
+            self.search_and_download(transcription)
+            self.media_open(self.current_video_id + self.ext)
+            self.media_play()
 
     def update_volume(self):
         volume = self.horizontalSlider.value() + 1
