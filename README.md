@@ -18,15 +18,23 @@
 1. Instalar as dependências:
 
     PyQt5
+
     bs4
+
     python-vlc
+
     youtube-dl (executable version, not the module)
+
     speech_recognition (optional)
+
     google-cloud-speech (backend for speech_recognition)
+
     pocketsphinx (backend for speech_recognition)
+
     sense_hat (optional)
 
 2. Clonar o repositório: `git clone https://github.com/gmes78/PIMP-U.Jr.git`
+
 3. `python3 main.py`
 
 #### Hardware  
