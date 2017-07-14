@@ -16,6 +16,7 @@ except ModuleNotFoundError:
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
     signal_start_transcribing = QtCore.pyqtSignal()
+    signal_start_searching = QtCore.pyqtSignal(str)
     signal_start_downloading = QtCore.pyqtSignal(str)
 
     def __init__(self):
@@ -54,6 +55,12 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.signal_start_downloading.connect(self.downloader.download)
         self.downloader_thread.start()
 
+        self.search_thread = QtCore.QThread()
+        self.search = YoutubeSearch(self)
+        self.search.moveToThread(self.search_thread)
+        self.signal_start_searching.connect(self.search.search)
+        self.search_thread.start()
+
         self.horizontalSlider.setValue(100)
         self.horizontalSlider.valueChanged.connect(self.update_volume)
 
@@ -85,11 +92,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
             self.sense_hat.stick.direction_right = self.media_forward
 
     def search_download_and_play(self, search_terms):
-        self.current_video_id = search.search(search_terms)
-        if not os.path.isfile(self.current_video_id + self.ext):
-            self.signal_start_downloading.emit(self.current_video_id)
-        else:
-            self.play_file()
+        self.signal_start_searching.emit(search_terms)
 
     def start_text(self):
         self.search_download_and_play(self.lineEdit.text())
@@ -203,6 +206,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
             self.download_and_play(self.playlist[target_index])
 
+    @QtCore.pyqtSlot(str)
     def download_and_play(self, video_id):
         self.current_video_id = video_id
         if not os.path.isfile(self.current_video_id + self.ext):
@@ -251,6 +255,22 @@ class VoiceRecognition(QtCore.QObject):
     def transcribe(self):
         transcription = speech.transcribe()
         self.signal_finished_transcribing.emit(transcription)
+
+
+class YoutubeSearch(QtCore.QObject):
+    signal_finished_searching = QtCore.pyqtSignal(str)
+
+    def __init__(self, main, parent=None):
+        super(YoutubeSearch, self).__init__(parent)
+
+        self.main = main
+
+        self.signal_finished_searching.connect(self.main.download_and_play)
+
+    @QtCore.pyqtSlot(str)
+    def search(self, search_terms):
+        video_id = search.search(search_terms)
+        self.signal_finished_searching.emit(video_id)
 
 
 class Downloader(QtCore.QObject):
