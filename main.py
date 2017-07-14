@@ -48,6 +48,7 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.pushButton_pause.clicked.connect(self.media_pause)
         self.pushButton_stop.clicked.connect(self.media_stop)
         self.pushButton_search.clicked.connect(self.start_text)
+        self.lineEdit.returnPressed.connect(self.start_text)
         self.pushButton_voice.clicked.connect(self.start_voice)
         self.pushButton_forwards.clicked.connect(self.media_forward)
         self.pushButton_back.clicked.connect(self.media_backward)
