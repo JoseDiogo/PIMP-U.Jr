@@ -20,6 +20,7 @@
     PyQt5
     bs4
     python-vlc
+    youtube-dl (executable version, not the module)
     speech_recognition (optional)
     google-cloud-speech (backend for speech_recognition)
     pocketsphinx (backend for speech_recognition)
