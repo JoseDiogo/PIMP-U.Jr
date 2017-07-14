@@ -2,7 +2,6 @@
 
 ### PIMP - Pi Interactive Music Player
 
-   Descrição...
   
 ##### [Vídeo aqui](https://mega.nz/#!JCwF3DqC!e_CugMPBB828hk51YaDd6qASH3GcUaUWuOhbDd87C9s)
   
@@ -17,6 +16,7 @@
 #### Instruções
 
 1. Instalar as dependências:
+
     PyQt5
     bs4
     python-vlc
