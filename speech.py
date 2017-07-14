@@ -1,4 +1,9 @@
-import speech_recognition as sr
+try:
+    import speech_recognition as sr
+    found_module = True
+except ModuleNotFoundError:
+    print('Couldn\'t import speechrecognition')
+    found_module = False
 
 
 def transcribe(language='en-US'):

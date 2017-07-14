@@ -54,9 +54,13 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
         self.pushButton_stop.clicked.connect(self.media_stop)
         self.pushButton_search.clicked.connect(self.start_text)
         self.lineEdit.returnPressed.connect(self.start_text)
-        self.pushButton_voice.clicked.connect(self.start_voice)
         self.pushButton_forwards.clicked.connect(self.media_forward)
         self.pushButton_back.clicked.connect(self.media_backward)
+
+        if speech.found_module:
+            self.pushButton_voice.clicked.connect(self.start_voice)
+        else:
+            self.pushButton_voice.setEnabled(False)
 
         if self.sense_hat is not None:
             self.sense_hat.stick.direction_up = self.volume_up
