@@ -5,7 +5,7 @@ import search
 import download
 import player
 import speech
-from PyQt5 import QtWidgets
+from PyQt5 import QtWidgets, QtCore
 from gui import Ui_MainWindow
 try:
     import sense_hat
@@ -15,6 +15,9 @@ except ModuleNotFoundError:
 
 
 class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
+    signal_start_transcribing = QtCore.pyqtSignal()
+    signal_start_downloading = QtCore.pyqtSignal()
+
     def __init__(self):
         super(MainWindow, self).__init__()
         self.setupUi(self)
@@ -81,6 +84,9 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
 
     def start_voice(self):
         transcription = speech.transcribe()
+        self.start_voice_2(transcription)
+
+    def start_voice_2(self, transcription):
         if transcription.lower() == 'pause':
             self.media_pause()
         elif transcription.lower() == 'play':
@@ -214,7 +220,15 @@ class MainWindow(QtWidgets.QMainWindow, Ui_MainWindow):
                     if os.path.getmtime(filename) < oldest_time:
                         oldest_time = os.path.getmtime(filename)
                         oldest_file = filename
-        return oldest_file                
+        return oldest_file
+
+
+class VoiceRecognition(QtCore.QThread):
+    signal_finished_transcribing = QtCore.pyqtSignal(str)
+
+
+class Downloader(QtCore.QThread):
+    signal_finished_downloading = QtCore.pyqtSignal(str)
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
